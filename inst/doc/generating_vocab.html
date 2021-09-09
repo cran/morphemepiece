@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Generating a Vocabulary and Lookup</title>
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<link href="data:text/css;charset=utf-8,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" rel="stylesheet" type="text/css" />
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Generating a Vocabulary and Lookup</h1>
+
+
+
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Install non-CRAN packages</span>
+<span class="co"># remotes::install_github(&quot;macmillancontentscience/wikimorphemes&quot;)</span>
+<span class="co"># remotes::install_github(&quot;macmillancontentscience/wordpiece.data&quot;)</span>
+<span class="kw">library</span>(morphemepiece)
+<span class="kw">library</span>(wikimorphemes)
+<span class="kw">library</span>(wordpiece.data)
+<span class="kw">library</span>(dplyr)
+<span class="kw">library</span>(ggplot2)
+<span class="kw">library</span>(purrr)</code></pre></div>
+<p>This vignette shows how to use the processed words from the {wikimorphemes} package to create a morphemepiece vocabulary and lookup table.</p>
+<p>To make a morphemepiece vocabulary, start with...</p>
+<ul>
+<li>a wordpiece vocabulary</li>
+<li>a processed wikimorphemes cache</li>
+<li>(optionally) a word frequency table derived from some corpus.</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># load functions to make the vocab + lookup</span>
+<span class="kw">source</span>(here<span class="op">::</span><span class="kw">here</span>(<span class="st">&quot;vignettes&quot;</span>, <span class="st">&quot;make_vocab_and_lookup.R&quot;</span>))
+
+<span class="co"># Load data from various packages related to this task.</span>
+original_lookup &lt;-<span class="st"> </span><span class="kw">readRDS</span>(wikimorphemes<span class="op">::</span><span class="kw">download_wikimorphemes_lookup</span>())
+
+<span class="co"># </span><span class="al">TODO</span><span class="co">: Add something to reproduce this or host it somewhere.</span>
+word_frequency_table &lt;-<span class="st"> </span><span class="kw">readRDS</span>(
+  fs<span class="op">::</span><span class="kw">path</span>(
+    <span class="kw">morphemepiece_cache_dir</span>(),
+    <span class="st">&quot;word_frequency_table.rds&quot;</span>
+  )
+)
+
+<span class="co"># Not all wiktionary words are in the wiktionary lookup. Use the full word list</span>
+<span class="co"># to add short words back in.</span>
+full_lookup &lt;-<span class="st"> </span><span class="kw">.add_words_to_lookup</span>(
+  original_lookup, 
+  wikimorphemes<span class="op">::</span><span class="kw">wiktionary_word_list</span>()
+)</code></pre></div>
+<p>Before we make a specific vocabulary, we can look at which morphemes are most common over all wiktionary words to get a prioritized list.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># for much of this process, it's more convenient to have the processed words</span>
+<span class="co"># unnested, with one morpheme per row. This takes a few minutes.</span>
+
+<span class="co"># Currently, we're considering only words with pure lowercase latin characters.</span>
+<span class="co"># We likely will want to also include the simplified version of words with</span>
+<span class="co"># accented characters in this list. </span>
+unnested_lookup &lt;-<span class="st"> </span><span class="kw">.unnest_lookup</span>(full_lookup, <span class="dt">clean =</span> <span class="ot">TRUE</span>)
+
+<span class="co"># count how many wiktionary words each token appears in.</span>
+token_counts &lt;-<span class="st"> </span><span class="kw">count_tokens</span>(unnested_lookup)
+
+utils<span class="op">::</span><span class="kw">head</span>(token_counts)</code></pre></div>
+<p>Unsurprisingly, the top token is &quot;##s&quot;, the &quot;s&quot; inflection at the ends of words.</p>
+<p>We rank tokens in order of frequency. We can also rank <em>words</em> in order of the maximum rank that their component tokens have. This shows which words would be covered by a token vocabulary including tokens up to some rank.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Some words process into &quot;non-clean&quot; tokens (diacrits, etc.).</span>
+<span class="co"># Those tokens are excluded in token_counts, so will get an NA here.</span>
+<span class="co"># Deal with this better later, but for now, just remove those words.</span>
+<span class="co"># (only about 0.01% of words)</span>
+
+<span class="co"># Find the highest-rank (rarest) token within each word.</span>
+words_with_max_token_ranks &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">left_join</span>(
+  unnested_lookup, 
+  token_counts, 
+  <span class="dt">by =</span> <span class="st">&quot;token&quot;</span>
+) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span>dplyr<span class="op">::</span><span class="kw">group_by</span>(word) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span>dplyr<span class="op">::</span><span class="kw">summarize</span>(<span class="dt">max_rank =</span> <span class="kw">max</span>(rank)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span>dplyr<span class="op">::</span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">is.na</span>(max_rank))
+
+<span class="co"># Count how many total words are covered by tokens up to some rank:</span>
+words_vs_tokens &lt;-<span class="st"> </span>words_with_max_token_ranks <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span>dplyr<span class="op">::</span><span class="kw">group_by</span>(max_rank) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span>dplyr<span class="op">::</span><span class="kw">summarize</span>(<span class="dt">n_words =</span> dplyr<span class="op">::</span><span class="kw">n_distinct</span>(word)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span>dplyr<span class="op">::</span><span class="kw">arrange</span>(max_rank) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(<span class="dt">n_words =</span> <span class="kw">cumsum</span>(n_words))</code></pre></div>
+<p>There are 194347 distinct tokens and 643745 distinct words.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># plot!</span>
+words_vs_tokens <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(<span class="dt">frac_words =</span> n_words<span class="op">/</span><span class="kw">max</span>(n_words)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(<span class="dt">frac_tokens =</span> max_rank<span class="op">/</span><span class="kw">max</span>(max_rank)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span>ggplot2<span class="op">::</span><span class="kw">ggplot</span>(ggplot2<span class="op">::</span><span class="kw">aes</span>(<span class="dt">x =</span> frac_tokens, <span class="dt">y =</span> frac_words)) <span class="op">+</span><span class="st"> </span>
+<span class="st">  </span>ggplot2<span class="op">::</span><span class="kw">geom_point</span>() </code></pre></div>
+<p>Note that only about 5% of the morpheme tokens (out of about 194K) are needed to cover about 50% of the words (out of about 644K).</p>
+<p>The plot above weights each word equally, no matter how frequently that word occurs. To get a sense of word coverage by actual usage, we can weight each word by how often it occurs in some corpus. For example, weighting words by occurrence in the wikitext-103 corpus:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># passing a word frequency table in (columns: word, word_count) applies weights</span>
+<span class="co"># to the token counts. </span>
+token_counts_weighted &lt;-<span class="st"> </span><span class="kw">count_tokens</span>(unnested_lookup, word_frequency_table)
+utils<span class="op">::</span><span class="kw">head</span>(token_counts_weighted)</code></pre></div>
+<p>Now the top token is &quot;the&quot;, just because of how common that word is.</p>
+<p>Instead of counting how many words are covered by tokens up to some rank, we should count the <em>total weight</em> of words covered. For this, we join onto word_frequency_table again (giving words not found in the corpus a count of one).</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">words_with_max_token_ranks_weighted &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">left_join</span>(
+  unnested_lookup, 
+  token_counts_weighted, 
+  <span class="dt">by =</span> <span class="st">&quot;token&quot;</span>
+) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span>dplyr<span class="op">::</span><span class="kw">group_by</span>(word) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span>dplyr<span class="op">::</span><span class="kw">summarize</span>(<span class="dt">max_rank =</span> <span class="kw">max</span>(rank)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span>dplyr<span class="op">::</span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">is.na</span>(max_rank))
+
+weighted_tokens_and_words &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">left_join</span>(
+  words_with_max_token_ranks_weighted,
+  word_frequency_table,
+  <span class="dt">by =</span> <span class="st">&quot;word&quot;</span>
+) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(
+    <span class="dt">word_count =</span> <span class="kw">ifelse</span>(
+      <span class="dt">test =</span> <span class="kw">is.na</span>(word_count), 
+      <span class="dt">yes =</span> 1L, 
+      <span class="dt">no =</span> word_count
+    )
+  )
+
+words_vs_tokens_weighted &lt;-<span class="st"> </span>weighted_tokens_and_words <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span>dplyr<span class="op">::</span><span class="kw">group_by</span>(max_rank) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span>dplyr<span class="op">::</span><span class="kw">summarize</span>(<span class="dt">n_words =</span> <span class="kw">sum</span>(word_count)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span>dplyr<span class="op">::</span><span class="kw">arrange</span>(max_rank) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(<span class="dt">n_words =</span> <span class="kw">cumsum</span>(n_words))
+
+<span class="co"># plot!</span>
+words_vs_tokens_weighted <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(<span class="dt">frac_words =</span> n_words<span class="op">/</span><span class="kw">max</span>(n_words)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(<span class="dt">frac_tokens =</span> max_rank<span class="op">/</span><span class="kw">max</span>(max_rank)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span>ggplot2<span class="op">::</span><span class="kw">ggplot</span>(ggplot2<span class="op">::</span><span class="kw">aes</span>(<span class="dt">x =</span> frac_tokens, <span class="dt">y =</span> frac_words)) <span class="op">+</span><span class="st"> </span>
+<span class="st">  </span>ggplot2<span class="op">::</span><span class="kw">geom_point</span>() </code></pre></div>
+<p>The top 5% of tokens would cover over 98% of words by usage.</p>
+<p>Now we make an actual vocabulary and lookup.</p>
+<p>We construct a morphemepiece vocabulary, starting from a wordpiece vocabulary. The constructed vocabulary contains the same &quot;fancy&quot; tokens as wordpiece (punctuation, etc.), but replaces most (non-short, non-proper-noun) words with their morpheme tokens. This process generally results in a core vocabulary with about 16K tokens.</p>
+<p>If our target vocabulary size is larger than this, additional tokens are added from the (ranked) list of tokens.</p>
+<p>The lookup contains every word in the wikipedia word list which is covered by (processes into) the tokens in the vocabulary.</p>
+<p>Here, let's make two vocabularies: one &quot;small&quot; (minimum to roughly cover the wordpiece vocabulary) and one &quot;large&quot; (comparable to the size of the wordpiece vocabulary).</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">vandl_small &lt;-<span class="st"> </span><span class="kw">make_vocab_and_lookup</span>(
+  <span class="dt">full_lookup =</span> original_lookup,
+  <span class="dt">full_vocabulary =</span> wikimorphemes<span class="op">::</span><span class="kw">wiktionary_word_list</span>(),
+  <span class="dt">wordpiece_vocab =</span> wordpiece.data<span class="op">::</span><span class="kw">wordpiece_vocab</span>(),
+  <span class="dt">target_vocab_size =</span> <span class="dv">0</span>, <span class="co"># no extra tokens</span>
+  <span class="dt">word_frequency_table =</span> word_frequency_table
+)
+
+vandl_large &lt;-<span class="st"> </span><span class="kw">make_vocab_and_lookup</span>(
+  <span class="dt">full_lookup =</span> original_lookup,
+  <span class="dt">full_vocabulary =</span> wikimorphemes<span class="op">::</span><span class="kw">wiktionary_word_list</span>(),
+  <span class="dt">wordpiece_vocab =</span> wordpiece.data<span class="op">::</span><span class="kw">wordpiece_vocab</span>(),
+  <span class="dt">target_vocab_size =</span> 30000L,
+  <span class="dt">word_frequency_table =</span> word_frequency_table
+)</code></pre></div>
+<p>The vocabulary and lookup aren't yet in our standardized forms. First, we save them as standardized text files.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># </span><span class="al">TODO</span><span class="co">: Make this save and reload stuff unnecessary!</span>
+text_lookup_small &lt;-<span class="st"> </span><span class="kw">.make_text_lookup</span>(
+  <span class="dt">voc =</span> vandl_small<span class="op">$</span>vocab, 
+  <span class="dt">lu =</span> vandl_small<span class="op">$</span>lookup,
+  <span class="dt">word_freq_tab =</span> word_frequency_table
+)
+
+<span class="kw">writeLines</span>(
+  text_lookup_small, 
+  <span class="kw">file.path</span>(<span class="kw">morphemepiece_cache_dir</span>(), <span class="st">&quot;mp_lookup_small.txt&quot;</span>)
+)
+<span class="co"># vocab is already just a character vector</span>
+<span class="kw">writeLines</span>(
+  vandl_small<span class="op">$</span>vocab, 
+  <span class="kw">file.path</span>(<span class="kw">morphemepiece_cache_dir</span>(), <span class="st">&quot;mp_vocab_small.txt&quot;</span>)
+)
+
+<span class="co"># now do large</span>
+text_lookup_large &lt;-<span class="st"> </span><span class="kw">.make_text_lookup</span>(
+  <span class="dt">voc =</span> vandl_large<span class="op">$</span>vocab, 
+  <span class="dt">lu =</span> vandl_large<span class="op">$</span>lookup,
+  <span class="dt">word_freq_tab =</span> word_frequency_table
+)
+
+<span class="kw">writeLines</span>(
+  text_lookup_large, 
+  <span class="kw">file.path</span>(<span class="kw">morphemepiece_cache_dir</span>(), <span class="st">&quot;mp_lookup_large.txt&quot;</span>)
+)
+<span class="co"># vocab is already just a character vector</span>
+<span class="kw">writeLines</span>(
+  vandl_large<span class="op">$</span>vocab, 
+  <span class="kw">file.path</span>(<span class="kw">morphemepiece_cache_dir</span>(), <span class="st">&quot;mp_vocab_large.txt&quot;</span>)
+)
+
+<span class="co"># Read back from text files to process as standard {morphemepiece} files:</span>
+vocab &lt;-<span class="st"> </span><span class="kw">load_or_retrieve_vocab</span>(
+  <span class="kw">file.path</span>(<span class="kw">morphemepiece_cache_dir</span>(), <span class="st">&quot;mp_vocab_large.txt&quot;</span>)
+)
+lookup &lt;-<span class="st"> </span><span class="kw">load_or_retrieve_lookup</span>(
+  <span class="kw">file.path</span>(<span class="kw">morphemepiece_cache_dir</span>(), <span class="st">&quot;mp_lookup_large.txt&quot;</span>)
+)
+
+<span class="kw">morphemepiece_tokenize</span>(<span class="st">&quot;Surprisingly easy&quot;</span>, vocab, lookup)</code></pre></div>
+<div id="check-coverage" class="section level2">
+<h2>Check coverage</h2>
+<p>With these vocabularies, we can look at various measures of coverage. For example, what (weighted) fraction of words from our corpus are covered by the vocab/lookup?</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">corpus_coverage_small &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">left_join</span>(
+  word_frequency_table, 
+  vandl_small<span class="op">$</span>lookup, 
+  <span class="dt">by =</span> <span class="st">&quot;word&quot;</span>
+) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(<span class="dt">covered_lookup =</span> <span class="op">!</span><span class="kw">is.na</span>(tokenization)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="co"># not every word in the vocab is in the lookup; check vocab too</span>
+<span class="st">  </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(<span class="dt">covered_vocab =</span> word <span class="op">%in%</span><span class="st"> </span>vandl_small<span class="op">$</span>vocab) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(<span class="dt">covered =</span> covered_lookup <span class="op">|</span><span class="st"> </span>covered_vocab) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(<span class="dt">covered_weighted =</span> covered<span class="op">*</span>word_count) 
+
+corpus_coverage_small <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span>dplyr<span class="op">::</span><span class="kw">summarize</span>(<span class="kw">sum</span>(covered_weighted)<span class="op">/</span><span class="kw">sum</span>(word_count))</code></pre></div>
+<p>The &quot;small&quot; vocabulary covers 95% of words from the corpus, weighted by usage.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">corpus_coverage_large &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">left_join</span>(
+  word_frequency_table, 
+  vandl_large<span class="op">$</span>lookup, 
+  <span class="dt">by =</span> <span class="st">&quot;word&quot;</span>
+) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(<span class="dt">covered_lookup =</span> <span class="op">!</span><span class="kw">is.na</span>(tokenization)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="co"># not every word in the vocab is in the lookup; check vocab too</span>
+<span class="st">  </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(<span class="dt">covered_vocab =</span> word <span class="op">%in%</span><span class="st"> </span>vandl_large<span class="op">$</span>vocab) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(<span class="dt">covered =</span> covered_lookup <span class="op">|</span><span class="st"> </span>covered_vocab) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(<span class="dt">covered_weighted =</span> covered<span class="op">*</span>word_count) 
+
+corpus_coverage_large <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span>dplyr<span class="op">::</span><span class="kw">summarize</span>(<span class="kw">sum</span>(covered_weighted)<span class="op">/</span><span class="kw">sum</span>(word_count))</code></pre></div>
+<p>The &quot;large&quot; vocabulary covers 96.5% of words, 1.5% more words (weighted) than the &quot;small&quot; vocabulary.</p>
+<p>It is useful to look at the most common words that are <em>not</em> covered by the vocabularies:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#large</span>
+corpus_coverage_large <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span>dplyr<span class="op">::</span><span class="kw">filter</span>(<span class="op">!</span>covered) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span>dplyr<span class="op">::</span><span class="kw">arrange</span>(dplyr<span class="op">::</span><span class="kw">desc</span>(word_count)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span>utils<span class="op">::</span><span class="kw">head</span>(<span class="dv">10</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span>dplyr<span class="op">::</span><span class="kw">select</span>(word, word_count)</code></pre></div>
+<p>Our process (as of August 2021) has a hole: abbreviations such as &quot;km&quot; and &quot;cm&quot; really should be in the vocabulary, but they are missing due to not having an &quot;English&quot; section in Wiktionary. We'll address this in a future update.</p>
+<p>Other categories of uncovered words include some proper nouns, words with diacritical marks, and partial contractions (like &quot;didn&quot;).</p>
+<p>The word &quot;los&quot; in this list raises an interesting question for future consideration: should a small set of common words in languages besides English be included? After all, a significant number of tokens in both wordpiece and morphemepiece are currently used for Asian language characters.</p>
+</div>
+<div id="other-measures-of-coverage-quality" class="section level2">
+<h2>Other measures of coverage quality</h2>
+<p>Some other checks we will try include:</p>
+<ul>
+<li>For the top 1000 common words (e.g. as estimated <a href="https://xkcd.com/simplewriter/words.js">here</a>), manually evaluate the quality of the breakdown.</li>
+<li>For N random covered words <em>without</em> a breakdown, manually evaluate whether the word should have a breakdown.</li>
+</ul>
+<p>(These checks have not been re-ran yet with the updated data.)</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># just for fun :-D</span>
+xkcd_words_url &lt;-<span class="st"> &quot;https://xkcd.com/simplewriter/words.js&quot;</span>
+tf &lt;-<span class="st"> </span><span class="kw">tempfile</span>()
+<span class="kw">system</span>(<span class="kw">paste</span>(<span class="st">&quot;wget&quot;</span>, xkcd_words_url, <span class="st">&quot;-O&quot;</span>, tf))
+<span class="kw">system</span>(<span class="kw">paste</span>(<span class="st">&quot;echo &gt;&gt;&quot;</span>, tf)) <span class="co"># add final newline</span>
+
+raw_words &lt;-<span class="st"> </span><span class="kw">readLines</span>(tf)
+raw_words &lt;-<span class="st"> </span>raw_words[<span class="kw">grepl</span>(<span class="st">&quot;WORDS&quot;</span>, raw_words)]
+raw_words &lt;-<span class="st"> </span>stringr<span class="op">::</span><span class="kw">str_split</span>(raw_words, <span class="st">'&quot;'</span>)[[<span class="dv">1</span>]]
+raw_words &lt;-<span class="st"> </span>raw_words[<span class="kw">grepl</span>(<span class="st">&quot;</span><span class="ch">\\</span><span class="st">|&quot;</span>, raw_words)]
+words &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">tibble</span>(<span class="dt">top_words =</span> stringr<span class="op">::</span><span class="kw">str_split</span>(raw_words, <span class="st">&quot;</span><span class="ch">\\</span><span class="st">|&quot;</span>)[[<span class="dv">1</span>]])
+<span class="co"># I feel lied to. There are more than 3k words in this list.</span>
+words &lt;-<span class="st"> </span>words <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(<span class="dt">tokenized =</span> purrr<span class="op">::</span><span class="kw">map_chr</span>(top_words, <span class="cf">function</span>(w) {
+    <span class="kw">paste</span>(<span class="kw">names</span>(<span class="kw">morphemepiece_tokenize</span>(w, vocab, lookup)), <span class="dt">collapse =</span> <span class="st">&quot; &quot;</span>)[[<span class="dv">1</span>]]
+  }) 
+  )
+
+<span class="co"># ss_url &lt;- &quot;url of mp_scratch google sheet&quot;</span>
+
+<span class="co"># already authorized</span>
+<span class="co"># googlesheets4::write_sheet(words, ss_url)</span>
+<span class="co"># manual check, add column &quot;is_ok&quot;</span>
+
+checked_words &lt;-<span class="st"> </span>googlesheets4<span class="op">::</span><span class="kw">read_sheet</span>(ss_url, <span class="dt">sheet =</span> <span class="st">&quot;check common words&quot;</span>)
+
+<span class="co"># if breakdown is ok, value is &quot;y&quot;</span>
+
+<span class="kw">mean</span>(checked_words<span class="op">$</span>is_ok <span class="op">==</span><span class="st"> &quot;y&quot;</span>)
+
+<span class="co"># [1] 0.9711062</span>
+<span class="co"># many of the exceptions can/should be fixed in wiktionary</span></code></pre></div>
+<p>Fewer than 3% of these words (about 100 total) were judged to be problematic. For these common words, it makes sense for us to address the issues directly in Wiktionary where possible.</p>
+<p>For the next check, randomly pick some words of at least length 4 without a breakdown:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">all_words &lt;-<span class="st"> </span><span class="kw">unique</span>(unnested_lookup<span class="op">$</span>word)
+unbroken_vocab_words &lt;-<span class="st"> </span><span class="kw">intersect</span>(<span class="kw">names</span>(vocab), all_words)
+unbroken_vocab_words &lt;-<span class="st"> </span>unbroken_vocab_words[<span class="kw">nchar</span>(unbroken_vocab_words) <span class="op">&gt;</span><span class="st"> </span><span class="dv">3</span>]
+
+<span class="co"># sample a few hundred</span>
+unbroken_sample &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">tibble</span>(<span class="dt">unbroken_word =</span> <span class="kw">sample</span>(unbroken_vocab_words, 
+                                                        <span class="dt">size =</span> <span class="dv">300</span>))
+<span class="co"># send to google sheet for manual check</span>
+
+<span class="co"># googlesheets4::write_sheet(unbroken_sample, ss_url, sheet = &quot;unbroken_check&quot;)</span>
+<span class="co"># manual check, add column &quot;is_ok&quot;</span>
+checked_unbroken_words &lt;-<span class="st"> </span>googlesheets4<span class="op">::</span><span class="kw">read_sheet</span>(
+  ss_url, 
+  <span class="dt">sheet =</span> <span class="st">&quot;check unbroken words&quot;</span>
+)
+
+<span class="co"># if breakdown is ok, value is &quot;y&quot;</span>
+<span class="kw">table</span>(checked_unbroken_words<span class="op">$</span>is_ok)
+ <span class="co">#  ?   n   y </span>
+ <span class="co"># 24  32 244 </span>
+<span class="co"># many of the exceptions can/should be fixed in wiktionary</span></code></pre></div>
+<p>About 10% of this sample was judged to be wrong (definitely should have a breakdown), and about 10% was judged to be questionable (maybe should have a breakdown).</p>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
