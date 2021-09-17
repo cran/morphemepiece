@@ -1,12 +1,12 @@
-a5940a06adfb6bd759d1d52f7259de67 *DESCRIPTION
+41129b1c681c2131a3d71eac25b245d4 *DESCRIPTION
 b140a61a3ca1e44c29671f1ba455948b *NAMESPACE
-1ef5cfe7e0d2cc8a7ca53ad6f3dc3a70 *NEWS.md
+687dafe4d527fd54cc64415ea1b0e7ce *NEWS.md
 2eff73ad516077744d58b49184d5c7d6 *R/00package_help.R
 d3274bc6a7a698d0fd37fcf8a236481e *R/imports.R
 f9ac1e37f8d68f5abbcfde006df9c93a *R/tokenize.R
 164e1a6fc01774c933fe9e25db711905 *R/utils.R
-062b2b896475c6b8c5f7ba2033d09d98 *R/vocab.R
-5c6ad883effbd2b95647eeeab70747f2 *README.md
+00f922f8bf16836e72213b965510524c *R/vocab.R
+eb3e66e01bda08d799d7bf273e79ddaf *README.md
 14022573b718a840791a6cee601a4775 *build/vignette.rds
 8f21bc286cf1a3fa2f634325211664e1 *inst/doc/algorithm_test.R
 8ad7903a13dbbf90724e101de9b87863 *inst/doc/algorithm_test.Rmd
@@ -32,7 +32,7 @@ e43539c78a91dba799028ef6528a4026 *man/prepare_vocab.Rd
 ec8fd464ece0c570775af706a03fdf49 *man/reexports.Rd
 8b554705ed4984bb9c279908556e8812 *man/set_morphemepiece_cache_dir.Rd
 ec7a14c05b6a64fdaab71c2dc2b69e98 *tests/testthat.R
-b38a248bc9f31d877b82ba80df208101 *tests/testthat/test-morphemepiece.R
+62f6bda2d27e98980cbf7b099cb34877 *tests/testthat/test-morphemepiece.R
 8ad7903a13dbbf90724e101de9b87863 *vignettes/algorithm_test.Rmd
 eb67d432a267d23fb0ffe6a925add367 *vignettes/generating_vocab.Rmd
 2e8240d060e67f6a18a338e062342470 *vignettes/make_vocab_and_lookup.R

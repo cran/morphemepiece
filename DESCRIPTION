@@ -1,7 +1,7 @@
 Package: morphemepiece
 Type: Package
 Title: Morpheme Tokenization
-Version: 1.0.0
+Version: 1.0.1
 Authors@R: c(
     person(given = "Jonathan",
            family = "Bratt",
@@ -32,10 +32,10 @@ Suggests: dplyr, fs, ggplot2, here, knitr, remotes, rmarkdown, testthat
 VignetteBuilder: knitr
 Config/testthat/edition: 3
 NeedsCompilation: no
-Packaged: 2021-09-06 19:40:48 UTC; jonathan.bratt
+Packaged: 2021-09-16 20:21:00 UTC; jonathan.bratt
 Author: Jonathan Bratt [aut, cre] (<https://orcid.org/0000-0003-2859-0076>),
   Jon Harmon [aut] (<https://orcid.org/0000-0003-4781-4346>),
   Bedford Freeman & Worth Pub Grp LLC DBA Macmillan Learning [cph]
 Maintainer: Jonathan Bratt <jonathan.bratt@macmillan.com>
 Repository: CRAN
-Date/Publication: 2021-09-09 07:10:06 UTC
+Date/Publication: 2021-09-17 08:20:02 UTC
