@@ -176,12 +176,12 @@ words_vs_tokens <- list(
 #    word_freq_tab = word_frequency_table
 #  )
 #  
-#  writeLines(
+#  readr::write_lines(
 #    text_lookup_large,
 #    file.path(morphemepiece_cache_dir(), "mp_lookup_large.txt")
 #  )
 #  # vocab is already just a character vector
-#  writeLines(
+#  readr::write_lines(
 #    vandl_large$vocab,
 #    file.path(morphemepiece_cache_dir(), "mp_vocab_large.txt")
 #  )
@@ -195,6 +195,7 @@ words_vs_tokens <- list(
 #  )
 #  
 #  morphemepiece_tokenize("Surprisingly easy", vocab, lookup)
+#  morphemepiece_tokenize("'Twas brillig, and the slithy toves", vocab, lookup)
 
 ## ----check-coverage-small-----------------------------------------------------
 #  corpus_coverage_small <- dplyr::left_join(
@@ -228,30 +229,45 @@ words_vs_tokens <- list(
 
 ## ----show-coverage-large------------------------------------------------------
 #  #large
-#  corpus_coverage_large %>%
-#    dplyr::filter(!covered) %>%
-#    dplyr::arrange(dplyr::desc(word_count)) %>%
-#    utils::head(10) %>%
-#    dplyr::select(word, word_count)
+#  uncovered <- corpus_coverage_large %>%
+#    dplyr::filter(!.data$covered) %>%
+#    dplyr::arrange(dplyr::desc(.data$word_count)) %>%
+#    dplyr::select(.data$word, .data$word_count) %>%
+#    head(100) %>%
+#    dplyr::mutate(
+#      tokenization = morphemepiece_tokenize(
+#        .data$word,
+#        vocab = vocab,
+#        lookup = lookup
+#      )
+#    ) %>%
+#    dplyr::rowwise() %>%
+#    dplyr::mutate(
+#      tokenization = paste(names(.data$tokenization), collapse = " ")
+#    ) %>%
+#    dplyr::ungroup()
+#  
+#  head(uncovered, 10)
 
 ## ----xkcd, eval = FALSE-------------------------------------------------------
 #  # just for fun :-D
 #  xkcd_words_url <- "https://xkcd.com/simplewriter/words.js"
-#  tf <- tempfile()
-#  system(paste("wget", xkcd_words_url, "-O", tf))
-#  system(paste("echo >>", tf)) # add final newline
+#  raw_words <- readr::read_lines(xkcd_words_url)
 #  
-#  raw_words <- readLines(tf)
 #  raw_words <- raw_words[grepl("WORDS", raw_words)]
 #  raw_words <- stringr::str_split(raw_words, '"')[[1]]
 #  raw_words <- raw_words[grepl("\\|", raw_words)]
 #  words <- dplyr::tibble(top_words = stringr::str_split(raw_words, "\\|")[[1]])
 #  # I feel lied to. There are more than 3k words in this list.
 #  words <- words %>%
-#    dplyr::mutate(tokenized = purrr::map_chr(top_words, function(w) {
-#      paste(names(morphemepiece_tokenize(w, vocab, lookup)), collapse = " ")[[1]]
-#    })
-#    )
+#    dplyr::mutate(
+#      tokenized = morphemepiece_tokenize(.data$top_words, vocab, lookup)
+#    ) %>%
+#    dplyr::rowwise() %>%
+#    dplyr::mutate(
+#      tokenized = paste(names(.data$tokenized), collapse = " ")
+#    ) %>%
+#    dplyr::ungroup()
 #  
 #  # ss_url <- "url of mp_scratch google sheet"
 #  
@@ -259,14 +275,15 @@ words_vs_tokens <- list(
 #  # googlesheets4::write_sheet(words, ss_url)
 #  # manual check, add column "is_ok"
 #  
-#  checked_words <- googlesheets4::read_sheet(ss_url, sheet = "check common words")
+#  # checked_words <- googlesheets4::read_sheet(ss_url, sheet = "check common words")
 #  
 #  # if breakdown is ok, value is "y"
 #  
-#  mean(checked_words$is_ok == "y")
+#  # mean(checked_words$is_ok == "y")
 #  
 #  # [1] 0.9711062
 #  # many of the exceptions can/should be fixed in wiktionary
+#  # These have not been checked in a while.
 
 ## ----more-checks, eval = FALSE------------------------------------------------
 #  all_words <- unique(unnested_lookup$word)
@@ -280,13 +297,13 @@ words_vs_tokens <- list(
 #  
 #  # googlesheets4::write_sheet(unbroken_sample, ss_url, sheet = "unbroken_check")
 #  # manual check, add column "is_ok"
-#  checked_unbroken_words <- googlesheets4::read_sheet(
-#    ss_url,
-#    sheet = "check unbroken words"
-#  )
+#  # checked_unbroken_words <- googlesheets4::read_sheet(
+#  #   ss_url,
+#  #   sheet = "check unbroken words"
+#  # )
 #  
 #  # if breakdown is ok, value is "y"
-#  table(checked_unbroken_words$is_ok)
+#  # table(checked_unbroken_words$is_ok)
 #   #  ?   n   y
 #   # 24  32 244
 #  # many of the exceptions can/should be fixed in wiktionary
